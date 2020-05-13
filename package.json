@@ -21,6 +21,7 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
+    "bluetooth-obd": "^0.2.4",
     "express": "^4.17.1",
     "socket.io": "^2.3.0"
   }
