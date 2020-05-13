@@ -10,16 +10,18 @@
     "type": "git",
     "url": "git+https://github.com/pintaigao/Asurada_Project.git"
   },
-  "author": "",
+  "author": "Pintaigao He",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/pintaigao/Asurada_Project/issues"
   },
   "homepage": "https://github.com/pintaigao/Asurada_Project#readme",
+  "engines": {
+    "node": ">=8.0.0",
+    "npm": ">=6.0.0"
+  },
   "dependencies": {
-    "@abandonware/noble": "^1.9.2-8",
     "express": "^4.17.1",
-    "obd2": "^0.1.2",
     "socket.io": "^2.3.0"
   }
 }
