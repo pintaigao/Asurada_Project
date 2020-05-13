@@ -16,7 +16,7 @@
 
    
 
-   目前这个是有效的：https://github.com/EricSmekens/node-bluetooth-obd，前提是其安装在树莓派上面，
+   目前这个是有效的：https://github.com/EricSmekens/node-bluetooth-obd, 前提是其安装在树莓派上面，
 
    依赖的包（待以后深入研究）：
 
