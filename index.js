@@ -14,14 +14,15 @@ btOBDReader.on('dataReceived', function (data) {
 });
 
 btOBDReader.on('connected', function () {
-    this.addPoller("vss");
     this.addPoller("rpm");
-    this.addPoller("temp");
-    this.addPoller("load_pct");
-    this.addPoller("map");
-    this.addPoller("frp");
+    // this.addPoller("vss");
+    // this.addPoller("temp");
+    // this.addPoller("load_pct");
+    // this.addPoller("map");
+    // this.addPoller("frp");
 
-    this.startPolling(1500);
+    // Request all values per second.
+    this.startPolling(1000);
 });
 
 btOBDReader.on('error', function (data) {
@@ -32,5 +33,6 @@ btOBDReader.on('debug', function (data) {
     console.log('Debug: ' + data);
 });
 
-// Use first device with 'obd' in the name
+// Search and Connect to OBDII(ELM327)
+console.log("Start connecting to OBDII");
 btOBDReader.autoconnect('obd');
