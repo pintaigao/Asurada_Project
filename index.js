@@ -10,6 +10,7 @@ btOBDReader.setProtocol(6); */
 /* data format: { mode: '41', pid: '0C', name: 'rpm', value: 714 } */
 var btOBDReader = new OBDReader();
 btOBDReader.on('dataReceived', function (data) {
+	console.log(data)
 
     if (data && data.name === 'rpm') {
         renderSound(data);
@@ -18,12 +19,15 @@ btOBDReader.on('dataReceived', function (data) {
 
 function renderSound(data) {
     let rpmNum = data.value;
-    if (rpmNum === 0) {
-        player.play('./Resources/Audio/summer.mp3', (err) => {
+	console.log(rpmNum);
+    if (rpmNum > 1000 && rpmNum < 2000) {
+	    console.log("Go to here")
+        player.play('./Resources/Audio/bc.mp3', (err) => {
+		console.log("error detect")
             handlePlayerError(err);
         });
-    } else if (rpmNum > 0 && rpmNum < 1100) {
-        player.play('./Resources/Audio/summer.mp3', (err) => {
+    } else if (rpmNum > 2000) {
+        player.play('./Resources/Audio/booster-rocket-countdown.mp3', (err) => {
             handlePlayerError(err);
         });
     }
@@ -32,7 +36,7 @@ function renderSound(data) {
 btOBDReader.on('connected', function () {
     this.addPoller("rpm");
     // Request all values per second.
-    this.startPolling(1000);
+    this.startPolling(20000);
 });
 
 btOBDReader.on('error', function (data) {
