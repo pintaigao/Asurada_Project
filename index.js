@@ -36,17 +36,16 @@ btOBDReader.on('connected', function () {
 });
 
 btOBDReader.on('error', function (data) {
-    console.log('Error: ' + data);
+    console.log('Bluetooth Reader Error: ' + data);
 });
 
 btOBDReader.on('debug', function (data) {
-    console.log('Debug: ' + data);
+    console.log('Bluetooth Reader Debug: ' + data);
 });
 
 // Search and Connect to OBDII(ELM327)
 console.log("Start connecting to OBDII");
 btOBDReader.autoconnect('obd');
-
 
 function handlePlayerError(err) {
     console.log(err);
