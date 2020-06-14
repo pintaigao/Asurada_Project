@@ -45,7 +45,8 @@ class Asurada {
     }
 
     shuntOffBlink(ledId) {
-        ledId.stop(); ledId.off()
+        ledId.stop();
+        ledId.off();
     }
 
     turnOn(ledId) {
@@ -111,7 +112,30 @@ class Asurada {
         this.faceServo.to(0);
     }
 
-    blinkPattern1() {
+    blinkInitiateBuster() {
+        setInterval(() => {
+            setTimeout(() => blinkFirstStep(led6, led7), 0);
+            setTimeout(() => blinkSecondStep(led2, led12), 50);
+            setTimeout(() => blinkThirdStep(led10, led13), 100);
+            setTimeout(() => { stopThirdStepBlink(led10, led13); turnOffThirdStep(led10, led13) }, 1450);
+            setTimeout(() => { turnOffSecondStep(led2, led12) }, 1500);
+            setTimeout(() => { turnOffFirstStep(led6, led7) }, 1550);
+            setTimeout(() => blinkFirstStep(led6, led7), 1850);
+            setTimeout(() => blinkSecondStep(led2, led12), 1900);
+            setTimeout(() => blinkThirdStep(led10, led13), 2000);
+            setTimeout(() => { stopThirdStepBlink(led10, led13); turnOffThirdStep(led10, led13) }, 4000);
+        }, 10000);
+    }
+
+    blinkPatternBusterCount() {
+        setInterval(() => {
+            setTimeout(() => blinkFirstStep(led6, led7), 0);
+            setTimeout(() => blinkSecondStep(led2, led12), 50);
+            setTimeout(() => blinkThirdStep(led10, led13), 100);
+            setTimeout(() => { stopThirdStepBlink(led10, led13); turnOffThirdStep(led10, led13) }, 1500);
+            setTimeout(() => { turnOffSecondStep(led2, led12) }, 1550);
+            setTimeout(() => { turnOffFirstStep(led6, led7) }, 1600);
+        }, 2500);
     }
 }
 
@@ -124,6 +148,7 @@ class MusicPlayer {
 
     playBoosterCountDown(asurada) {
         asurada.turnBaseTo(30);
+        asurada.blinkPatternBusterCount();
         setTimeout(() => {
             player.play(
                 this.boosterCounter,
