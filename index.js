@@ -1,7 +1,7 @@
 const OBDReader = require('bluetooth-obd');
 const { Board, Led, Servo } = require("johnny-five");
 const player = require('play-sound')();
-const board = new Board();
+const board = new Board({ debug: false });
 
 /* Specify the car communications protocol rather than autodetect
 http://www.obdtester.com/elm-usb-commands
@@ -36,22 +36,10 @@ class Asurada {
             pin: 9
         });
 
-        this.centerBase();
-        this.resetFaceAngle();
+        // this.faceLedAlwaysOn();
+        // this.turnOnSideLed();
     }
 
-    startBlink(ledId, length) {
-        ledId.blink(length);
-    }
-
-    shuntOffBlink(ledId) {
-        ledId.stop();
-        ledId.off();
-    }
-
-    turnOn(ledId) {
-        ledId.on();
-    }
 
     faceLedAlwaysOn() {
         const led4 = new Led(4);
@@ -65,43 +53,64 @@ class Asurada {
         led11.on();
     }
 
-    blinkFirstStep(led1, led2) {
-        this.led1.on()
+    turnOnSideLed() {
+        this.turnOnFirstStep()
+        this.turnOnSecondStep()
+        this.turnOnThirdStep()
+    }
+
+    turnOnFirstStep() {
+        this.led6.on()
+        this.led7.on()
+    }
+
+    turnOnSecondStep() {
         this.led2.on()
+        this.led12.on()
     }
 
-    blinkSecondStep(led1, led2) {
-        this.led1.on()
-        this.led2.on()
+    turnOnThirdStep() {
+        this.led10.on();
+        this.led13.on();
     }
 
-    blinkThirdStep(led1, led2) {
-        this.led1.blink(120);
-        this.led2.blink(120);
+    blinkThirdStep() {
+        this.led10.blink(60);
+        this.led13.blink(60);
     }
 
-    stopThirdStepBlink(led1, led2) {
-        this.led1.stop();
-        this.led2.stop();
+    turnOffSideLed() {
+        this.turnOffFirstStep();
+        this.turnOffSecondStep();
+        this.turnOffThirdStep();
     }
 
-    turnOffThirdStep(led1, led2) {
-        this.led1.off();
-        this.led2.off();
+    stopThirdStepBlink() {
+        this.led10.stop();
+        this.led13.stop();
+    }
+
+    turnOffThirdStep() {
+        this.led10.off();
+        this.led13.off();
     }
 
     turnOffSecondStep() {
-        this.led1.off();
         this.led2.off();
+        this.led12.off();
     }
 
     turnOffFirstStep() {
-        this.led1.off();
-        this.led2.off();
+        this.led6.off();
+        this.led7.off();
     }
 
-    turnBaseTo(baseServo, angle) {
-        baseServo.to(angle);
+    turnBaseTo(angle) {
+        this.baseServo.to(angle);
+    }
+
+    turnFaceTo(angle) {
+        this.faceServo.to(angle);
     }
 
     centerBase() {
@@ -112,56 +121,120 @@ class Asurada {
         this.faceServo.to(0);
     }
 
-    blinkInitiateBuster() {
-        setInterval(() => {
-            setTimeout(() => blinkFirstStep(led6, led7), 0);
-            setTimeout(() => blinkSecondStep(led2, led12), 50);
-            setTimeout(() => blinkThirdStep(led10, led13), 100);
-            setTimeout(() => { stopThirdStepBlink(led10, led13); turnOffThirdStep(led10, led13) }, 1450);
-            setTimeout(() => { turnOffSecondStep(led2, led12) }, 1500);
-            setTimeout(() => { turnOffFirstStep(led6, led7) }, 1550);
-            setTimeout(() => blinkFirstStep(led6, led7), 1850);
-            setTimeout(() => blinkSecondStep(led2, led12), 1900);
-            setTimeout(() => blinkThirdStep(led10, led13), 2000);
-            setTimeout(() => { stopThirdStepBlink(led10, led13); turnOffThirdStep(led10, led13) }, 4000);
-        }, 10000);
+    blinkPatternBusterCount(delay) {
+        setTimeout(() => this.turnOnFirstStep(), 0 + delay);
+        setTimeout(() => this.turnOnSecondStep(), 50 + delay);
+        setTimeout(() => this.blinkThirdStep(), 100 + delay);
+        setTimeout(() => { this.stopThirdStepBlink(); this.turnOffThirdStep() }, 1000 + delay);
+        setTimeout(() => { this.turnOffSecondStep() }, 1050 + delay);
+        setTimeout(() => { this.turnOffFirstStep() }, 1100 + delay);
+
+        setTimeout(() => this.turnOnFirstStep(), 1500 + delay);
+        setTimeout(() => this.turnOnSecondStep(), 1550 + delay);
+        setTimeout(() => this.blinkThirdStep(), 1600 + delay);
+        setTimeout(() => { this.stopThirdStepBlink(); this.turnOffThirdStep() }, 2000 + delay);
+        setTimeout(() => { this.turnOffSecondStep() }, 2050 + delay);
+        setTimeout(() => { this.turnOffFirstStep() }, 2100 + delay);
+
+        // 4
+        setTimeout(() => { this.turnOnFirstStep() }, 2800 + delay);
+        setTimeout(() => { this.turnOnSecondStep() }, 2850 + delay);
+        setTimeout(() => { this.turnOnThirdStep() }, 2900 + delay);
+        setTimeout(() => { this.turnOffSideLed() }, 3400 + delay);
+
+        // 3
+        setTimeout(() => { this.turnOnFirstStep() }, 4000 + delay);
+        setTimeout(() => { this.turnOnSecondStep() }, 4050 + delay);
+        setTimeout(() => { this.turnOnThirdStep() }, 4100 + delay);
+        setTimeout(() => { this.turnOffSideLed() }, 4600 + delay);
+
+        // 2
+        setTimeout(() => { this.turnOnFirstStep() }, 5000 + delay);
+        setTimeout(() => { this.turnOnSecondStep() }, 5050 + delay);
+        setTimeout(() => { this.turnOnThirdStep() }, 5100 + delay);
+        setTimeout(() => { this.turnOffSideLed() }, 5600 + delay);
+
+        // 1
+        setTimeout(() => { this.turnOnFirstStep() }, 6000 + delay);
+        setTimeout(() => { this.turnOnSecondStep() }, 6050 + delay);
+        setTimeout(() => { this.turnOnThirdStep() }, 6100 + delay);
+        setTimeout(() => { this.turnOffSideLed() }, 6600 + delay);
+
+        setTimeout(() => { this.turnOnSideLed() }, 7000 + delay);
     }
 
-    blinkPatternBusterCount() {
-        setInterval(() => {
-            setTimeout(() => blinkFirstStep(led6, led7), 0);
-            setTimeout(() => blinkSecondStep(led2, led12), 50);
-            setTimeout(() => blinkThirdStep(led10, led13), 100);
-            setTimeout(() => { stopThirdStepBlink(led10, led13); turnOffThirdStep(led10, led13) }, 1500);
-            setTimeout(() => { turnOffSecondStep(led2, led12) }, 1550);
-            setTimeout(() => { turnOffFirstStep(led6, led7) }, 1600);
-        }, 2500);
+    blinkInitiateBuster(delay) {
+        setTimeout(() => this.turnOnFirstStep(), 0 + delay);
+        setTimeout(() => this.turnOnSecondStep(), 50 + delay);
+        setTimeout(() => this.blinkThirdStep(), 100 + delay);
+        setTimeout(() => { this.stopThirdStepBlink(); this.turnOffThirdStep() }, 1200 + delay);
+        setTimeout(() => { this.turnOffSecondStep() }, 1350 + delay);
+        setTimeout(() => { this.turnOffFirstStep() }, 1400 + delay);
+
+        setTimeout(() => this.turnOnFirstStep(), 1700 + delay);
+        setTimeout(() => this.turnOnSecondStep(), 1750 + delay);
+        setTimeout(() => this.blinkThirdStep(), 1800 + delay);
+        setTimeout(() => { this.stopThirdStepBlink(); this.turnOffThirdStep() }, 2200 + delay);
+        setTimeout(() => { this.turnOffSecondStep() }, 2250 + delay);
+        setTimeout(() => { this.turnOffFirstStep() }, 2300 + delay);
+
+        setTimeout(() => this.turnOnFirstStep(), 2600 + delay);
+        setTimeout(() => this.turnOnSecondStep(), 2650 + delay);
+        setTimeout(() => this.blinkThirdStep(), 2700 + delay);
+        setTimeout(() => { this.stopThirdStepBlink(); this.turnOffThirdStep() }, 3900 + delay);
+        setTimeout(() => { this.turnOffSecondStep() }, 3950 + delay);
+        setTimeout(() => { this.turnOffFirstStep() }, 4000 + delay);
+
+        setTimeout(() => { this.turnOnSideLed() }, 4050 + delay);
+
     }
 }
 
-/* Music Related */
 class MusicPlayer {
 
     constructor() {
-        this.boosterCounter = './Resources/Audio/booster-rocket-countdown.mp3';
+        this.boosterInitiate = './Resources/Audio/booster-initiate.mp3';
+        this.boosterCounter = './Resources/Audio/booster-countdown.mp3';
     }
 
-    playBoosterCountDown(asurada) {
-        asurada.turnBaseTo(30);
-        asurada.blinkPatternBusterCount();
+    playBoosterInitiate(asurada) {
+        setTimeout(() => { asurada.turnBaseTo(85) }, 50);
+        setTimeout(() => { asurada.turnFaceTo(0) }, 0);
+        setTimeout(() => { asurada.turnFaceTo(90) }, 300);
+        setTimeout(() => { asurada.turnFaceTo(180) }, 600);
+        setTimeout(() => asurada.turnOffSideLed(), 750);
+        asurada.blinkInitiateBuster(1100);
+
+        setTimeout(() => player.play(
+            this.boosterInitiate,
+            (err) => {
+                this.handlePlayerError(err);
+            }
+        ), 200);
+    }
+
+    playBoosterCountdown(asurada) {
+        setTimeout(() => { asurada.turnFaceTo(180) }, 0);
+        setTimeout(() => { asurada.turnFaceTo(90) }, 300);
+        setTimeout(() => { asurada.turnFaceTo(0) }, 600);
+        setTimeout(() => asurada.turnOffSideLed(), 400);
+        asurada.blinkPatternBusterCount(600);
+        setTimeout(() => player.play(
+            this.boosterCounter,
+            (err) => {
+                this.handlePlayerError(err);
+            }
+        ), 300)
+
         setTimeout(() => {
-            player.play(
-                this.boosterCounter,
-                (err) => {
-                    handlePlayerError(err);
-                });
-        }, 500);
+            asurada.centerBase();
+            asurada.turnFaceTo(0);
+        }, 10000);
     }
 
     handlePlayerError(err) {
         console.log(err);
     }
-
 }
 
 /* TODO:OBD Connector */
@@ -169,30 +242,37 @@ class OBDConnector { }
 /* ========================================================================================= */
 
 /* Bt本体Area */
-
 /* data format: { mode: '41', pid: '0C', name: 'rpm', value: 714 } */
 var btOBDReader = new OBDReader();
 
+board.on("ready", () => {
 
-btOBDReader.on('dataReceived', function (data) {
+    const AsuradaInstance = new Asurada();
     const MusicPlayerInstance = new MusicPlayer();
-    board.on("ready", () => {
-        const AsuradaInstance = new Asurada();
-        AsuradaInstance.centerBase();
-        if (data && rpmNum > 4000 && vssNum >= 60) {
-            MusicPlayerInstance.playBoosterCountDown(AsuradaInstance, data);
+    btOBDReader.on('dataReceived', function (data) {
+        AsuradaInstance.faceLedAlwaysOn();
+        AsuradaInstance.turnOnSideLed();
+        if (data && data.name === 'rpm' && data.value > 2500) {
+
+            MusicPlayerInstance.playBoosterInitiate(AsuradaInstance);
+            setTimeout(() => {
+                MusicPlayerInstance.playBoosterCountdown(AsuradaInstance);
+            }, 10000);
         }
+
     });
 });
 
 
 
+
+
 /* Default Fire Up Procedure, Set Up Carefully :) */
 btOBDReader.on('connected', function () {
+
     this.addPoller("rpm");
     this.addPoller("vss");
-    // Request all values per second.
-    this.startPolling(20000);
+    this.startPolling(15000);
 });
 
 btOBDReader.on('error', function (data) {

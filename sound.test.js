@@ -1,7 +1,7 @@
 const OBDReader = require('bluetooth-obd');
 const { Board, Led, Servo } = require("johnny-five");
 const player = require('play-sound')();
-const board = new Board();
+const board = new Board({ debug: false, repl: false });
 
 class Asurada {
     constructor() {
@@ -189,7 +189,7 @@ class MusicPlayer {
     }
 
     playBoosterInitiate(asurada) {
-        setTimeout(() => { asurada.turnBaseTo(45) }, 50);
+        setTimeout(() => { asurada.turnBaseTo(80) }, 50);
         setTimeout(() => { asurada.turnFaceTo(0) }, 0);
         setTimeout(() => { asurada.turnFaceTo(90) }, 300);
         setTimeout(() => { asurada.turnFaceTo(180) }, 600);
