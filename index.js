@@ -1,7 +1,7 @@
 const OBDReader = require('bluetooth-obd');
 const { Board, Led, Servo } = require("johnny-five");
 const player = require('play-sound')();
-const board = new Board({ debug: false });
+const board = new Board({ debug: false, repl: false });
 
 /* Specify the car communications protocol rather than autodetect
 http://www.obdtester.com/elm-usb-commands
@@ -198,7 +198,7 @@ class MusicPlayer {
     }
 
     playBoosterInitiate(asurada) {
-        setTimeout(() => { asurada.turnBaseTo(85) }, 50);
+        setTimeout(() => { asurada.turnBaseTo(45) }, 50);
         setTimeout(() => { asurada.turnFaceTo(0) }, 0);
         setTimeout(() => { asurada.turnFaceTo(90) }, 300);
         setTimeout(() => { asurada.turnFaceTo(180) }, 600);
@@ -249,15 +249,23 @@ board.on("ready", () => {
 
     const AsuradaInstance = new Asurada();
     const MusicPlayerInstance = new MusicPlayer();
+    var flag = true;
+    AsuradaInstance.faceLedAlwaysOn();
+    AsuradaInstance.turnOnSideLed();
     btOBDReader.on('dataReceived', function (data) {
-        AsuradaInstance.faceLedAlwaysOn();
-        AsuradaInstance.turnOnSideLed();
-        if (data && data.name === 'rpm' && data.value > 2500) {
+        console.log(data);
 
+        if (data && data.name === 'rpm' && data.value > 2500 && flag) {
+
+            flag = false;
             MusicPlayerInstance.playBoosterInitiate(AsuradaInstance);
             setTimeout(() => {
                 MusicPlayerInstance.playBoosterCountdown(AsuradaInstance);
             }, 10000);
+
+            setTimeout(() => {
+                flag = true;
+            }, 25000);
         }
 
     });
@@ -272,7 +280,7 @@ btOBDReader.on('connected', function () {
 
     this.addPoller("rpm");
     this.addPoller("vss");
-    this.startPolling(15000);
+    this.startPolling(2000);
 });
 
 btOBDReader.on('error', function (data) {
